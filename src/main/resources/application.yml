@@ -1,1 +1,27 @@
+# 配置路径
+server:
+  tomcat:
+    uri-encoding: utf-8
+  port: 8081
+  servlet:
+    context-path: /forum
+    session:
+      cookie:
+        http-only: false
+        path: /
 
+# 配置spring
+spring:
+  profiles:
+    active: dev
+  http:
+    encoding:
+     charset: utf-8
+     enabled: true
+  main:
+    #当遇到同包同名字的时候，是否允许覆盖注册
+    allow-bean-definition-overriding: true
+  freemarker:
+    suffix: .html
+    request-context-attribute: request
+    enabled: true
