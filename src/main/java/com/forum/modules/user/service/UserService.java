@@ -18,4 +18,5 @@ public interface UserService extends IService<UserDO> {
     UserDO getUser(String username);
 
     void updateUser(UserDO user);
+
 }

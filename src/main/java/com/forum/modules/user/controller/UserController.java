@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * <p>
@@ -32,7 +30,7 @@ import java.util.UUID;
 public class UserController {
 
     @Autowired
-    private UserService userService; // 用户user表
+    private UserService userService;
 
     /**
      *  登录验证

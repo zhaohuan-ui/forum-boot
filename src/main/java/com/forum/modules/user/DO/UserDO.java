@@ -1,12 +1,10 @@
 package com.forum.modules.user.DO;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.*;
 import com.forum.common.base.entity.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -15,6 +13,7 @@ import java.time.LocalDateTime;
  *
  * @author zhaohuan
  * @since 2020-05-03
+ * @MOdified By zcf
  */
 @Data
 @TableName("user")
@@ -23,11 +22,13 @@ public class UserDO extends BaseDO {
     /**
      * 用户名
      */
+    @Excel(name = "姓名", orderNum = "0", height = 20, width = 30)
     private String username;
 
     /**
      * 昵称
      */
+    @Excel(name = "昵称", orderNum = "0", height = 20, width = 30)
     private String nickName;
 
     /**
