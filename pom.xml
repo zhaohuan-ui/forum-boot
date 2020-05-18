@@ -95,9 +95,14 @@
             <version>1.2.58</version>
         </dependency>
         <dependency>
-            <groupId>repository.cn.afterturn</groupId>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-web</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-annotation</artifactId>
-            <version>4.1.0</version>
+            <version>3.0.3</version>
         </dependency>
     </dependencies>
 
