@@ -44,7 +44,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
             }
             List<AttentionQuestionDO> attentionQuestionDOS = attentionQuestionDao.selectList(new QueryWrapper<AttentionQuestionDO>().
                     eq("question_name", questionDO.getQuestionName()).
-                    eq("create_by", Integer.valueOf(redisUtils.get(token))));
+                    eq("create_by", Integer.valueOf(redisUtils.get(token))).
+                    eq("flag",0));
             if(attentionQuestionDOS != null && attentionQuestionDOS.size()>0){
                 questionDO.setAttentionNumber(1);
             }
