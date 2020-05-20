@@ -24,15 +24,13 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByName("createTime",new Date(),metaObject);
         this.setFieldValByName("updateTime",new Date(),metaObject);
-        // TODO 无法从session中获取用户信息
-        // this.setFieldValByName("createBy",LoginUtils.getUserDO().getId(),metaObject);
-        this.setFieldValByName("createBy",1,metaObject);
+        //this.setFieldValByName("createBy",1,metaObject);
         this.setFieldValByName("flag",0,metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.setFieldValByName("updateTime",LocalDateTime.now(),metaObject);
-        this.setFieldValByName("createBy",1,metaObject);
+        this.setFieldValByName("updateTime",new Date(),metaObject);
+        //this.setFieldValByName("createBy",1,metaObject);
     }
 }

@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * <p>
- * 用户表
- * </p>
+ * 用户信息表
  *
  * @author zhaohuan
  * @since 2020-05-03

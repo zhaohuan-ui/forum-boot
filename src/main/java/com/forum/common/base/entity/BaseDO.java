@@ -20,7 +20,7 @@ public class BaseDO implements Serializable {
     /**
      * 自增唯一主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId
     private Integer id;
 
     /**

@@ -4,6 +4,7 @@ import com.forum.common.utils.result.HttpResult;
 import com.forum.common.utils.result.HttpResultUtil;
 import com.forum.modules.user.DO.UserDO;
 import com.forum.modules.user.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,10 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
 
 /**
- * <p>
- * 用户表 前端控制器
- * </p>
- *
+ *  个人主页信息
  * @author zhaohuan
  * @since 2020-05-03
  */

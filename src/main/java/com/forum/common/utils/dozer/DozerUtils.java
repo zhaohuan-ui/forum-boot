@@ -4,6 +4,9 @@ package com.forum.common.utils.dozer;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  对象转换工具类
  * @author  : zhangchunfeng
@@ -22,5 +25,19 @@ public class DozerUtils {
      */
     public static <U> U map(final Object source,final Class<U> destType) {
         return mapper.map(source, destType);
+    }
+
+    /**
+     * 将list转换为vo的list
+     * @param source
+     * @param destType
+     * @return
+     */
+    public static <T, U> List<U> mapList(final List<T> source, final Class<U> destType) {
+        final List<U> dest = new ArrayList<U>();
+        for (T element : source) {
+            dest.add(mapper.map(element, destType));
+        }
+        return dest;
     }
 }
