@@ -26,9 +26,21 @@ public interface QuestionDao extends BaseMapper<QuestionDO> {
     @Select("select * from user_question where user_id = #{userId}")
     List<UserQuestion> laterList(@Param("userId") Integer userId);
 
+    /**
+     *  查询某个问题的关注者是多少
+     */
+    @Select("select * from user_question where question_id = #{questionId}")
+    List<UserQuestion> attentionNumber(@Param("questionId") Integer questionId);
+
+    /**
+     *  删除关注问题
+     */
     @Delete("delete from user_question where user_id = #{userId} and question_id = #{questionId}")
     void deleteLater(@Param("userId")Integer userId, @Param("questionId") Integer questionId);
 
+    /**
+     * 添加关注问题
+     */
     @Insert("insert into user_question(id,user_id,question_id) values( #{userQuestion.id}, #{userQuestion.userId},#{userQuestion.questionId})")
     void createLater(@Param("userQuestion") UserQuestion userQuestion);
 }

@@ -4,9 +4,12 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.144.207.22:3306/forum1.0?characterEncoding=utf-8
+#      url: jdbc:mysql://192.144.207.22:3306/forum1.0?characterEncoding=utf-8
+#      username: root
+#      password: 123456
+      url: jdbc:mysql://localhost:3306/forum1.0?useUnicode=true&characterEncoding=gbk&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
       username: root
-      password: 123456
+      password: root
   redis:
     database: 0
     host: 127.0.0.1
@@ -24,7 +27,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:dao/**/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.forum.modules.*.DO
+  typeAliasesPackage: com.forum.modules.*.dao
   global-config:
     db-config:
       #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
@@ -51,4 +54,8 @@ mybatis-plus:
 framework:
   redis:
     open: true  # 是否开启缓存  true开启   false关闭
+
+logging:
+  level:
+    root: info
 

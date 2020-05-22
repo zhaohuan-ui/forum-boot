@@ -1,11 +1,13 @@
 package com.forum.modules.questions.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.forum.modules.questions.DO.AttentionQuestionDO;
 import com.forum.modules.questions.VO.AttentionQuestionVO;
 import com.forum.modules.questions.VO.QuestionVO;
 
 import java.util.List;
 
-public interface AttentionQuestionService {
+public interface AttentionQuestionService extends IService<AttentionQuestionDO> {
     /**
      *  查询我关注的问题
      */
