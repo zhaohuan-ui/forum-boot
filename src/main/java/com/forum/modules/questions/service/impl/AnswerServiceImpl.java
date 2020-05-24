@@ -2,7 +2,9 @@ package com.forum.modules.questions.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.forum.common.utils.IDUtils.IDUtils;
 import com.forum.common.utils.dozer.DozerUtils;
+import com.forum.common.utils.redis.RedisUtils;
 import com.forum.modules.questions.DO.AnswerDO;
 import com.forum.modules.questions.DO.UserQuestion;
 import com.forum.modules.questions.VO.AnswerVO;
@@ -24,6 +26,8 @@ import java.util.Map;
 public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implements AnswerService {
 
     @Autowired
+    private RedisUtils redisUtils;
+    @Autowired
     private AnswerDao answerDao;
     @Autowired
     private QuestionDao questionDao;
@@ -37,7 +41,8 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
         List<AnswerDO> answerDOS = answerDao.selectList(new QueryWrapper<AnswerDO>().
                 eq("flag", 0).
                 eq("querstion_id", questionId).
-                eq("comment_id", 0));
+                eq("comment_id", 0).
+                orderByDesc("create_time"));
         List<AnswerVO> answerVOList = new ArrayList<>(); // 需要返回的数据
         List<AnswerDO> answerDOList = new ArrayList<>();
         for (AnswerDO answerDO : answerDOS) {
@@ -63,5 +68,15 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
         map.put("volumeNumber",volumeNumber); // 浏览数量
         map.put("answerNumber",answerNumber); // 回答数量
         return map;
+    }
+
+    @Override
+    public void createAnswer(AnswerVO answerVO, Integer querstionId, Integer commentId, String token) {
+        AnswerDO answerDO = DozerUtils.map(answerVO, AnswerDO.class);
+        answerDO.setId(IDUtils.getId());
+        answerDO.setQuerstionId(querstionId);
+        answerDO.setCommentId(commentId);
+        answerDO.setCreateBy(Integer.valueOf(redisUtils.get(token)));
+        answerDao.insert(answerDO);
     }
 }
