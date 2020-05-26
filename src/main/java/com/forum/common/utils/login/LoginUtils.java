@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  *  用户登录后信息保存
  */
-@Component
+//@Component
 public class LoginUtils {
 
     /**
