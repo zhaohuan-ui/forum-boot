@@ -16,6 +16,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *  RabbitMq: 测试用类(学习时调用)
+ *  @author Mr Zhang
+ *  @since 2020-06-08
+ */
 @RestController
 @RequestMapping("/rabbit")
 public class RabbitController {
