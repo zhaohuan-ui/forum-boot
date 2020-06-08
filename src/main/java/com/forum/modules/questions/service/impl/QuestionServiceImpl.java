@@ -57,7 +57,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
     @Override
     public void create(QuestionVO questionVO,String token) {
         QuestionDO questionDO = DozerUtils.map(questionVO, QuestionDO.class);
-        questionDO.setId(IDUtils.getId());
+        questionDO.setId(IDUtils.get10ID());
         questionDO.setCreateBy(Integer.valueOf(redisUtils.get(token)));
         this.save(questionDO);
     }
@@ -100,7 +100,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
     public void createLater(QuestionVO questionVO, String token) {
         Integer userId = Integer.valueOf(redisUtils.get(token));
         UserQuestion userQuestion = new UserQuestion();
-        userQuestion.setId(IDUtils.getId());
+        userQuestion.setId(IDUtils.get10ID());
         userQuestion.setUserId(userId);
         userQuestion.setQuestionId(questionVO.getId());
         questionDao.createLater(userQuestion);

@@ -73,7 +73,7 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
     @Override
     public void createAnswer(AnswerVO answerVO, Integer querstionId, Integer commentId, String token) {
         AnswerDO answerDO = DozerUtils.map(answerVO, AnswerDO.class);
-        answerDO.setId(IDUtils.getId());
+        answerDO.setId(IDUtils.get10ID());
         answerDO.setQuerstionId(querstionId);
         answerDO.setCommentId(commentId);
         answerDO.setCreateBy(Integer.valueOf(redisUtils.get(token)));

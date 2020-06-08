@@ -36,7 +36,7 @@ public class AttentionQuestionServiceImpl extends ServiceImpl<AttentionQuestionD
     @Override
     public void createAttention(QuestionVO questionVO, String token) {
         AttentionQuestionDO attentionQuestionDO = DozerUtils.map(questionVO, AttentionQuestionDO.class);
-        attentionQuestionDO.setId(IDUtils.getId());
+        attentionQuestionDO.setId(IDUtils.get10ID());
         attentionQuestionDO.setCreateBy(Integer.valueOf(redisUtils.get(token))); // 创建人ID
         attentionQuestionDao.insert(attentionQuestionDO);
     }
