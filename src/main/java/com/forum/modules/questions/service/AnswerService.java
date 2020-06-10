@@ -18,6 +18,6 @@ public interface AnswerService extends IService<AnswerDO> {
     /**
      *  添加已回答或者回答的评论
      */
-    void createAnswer(AnswerVO answerVO, Integer querstionId, Integer commentId, String token);
+    void createAnswer(AnswerVO answerVO, Integer questionId, Integer commentId);
 
 }

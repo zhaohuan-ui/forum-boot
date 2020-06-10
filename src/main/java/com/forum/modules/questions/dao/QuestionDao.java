@@ -11,14 +11,6 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface QuestionDao extends BaseMapper<QuestionDO> {
-    /**
-     *  查询是否点击稍后答按钮
-     * @param userId
-     * @param questionId
-     * @return
-     */
-    @Select("select * from user_question where user_id = #{userId} and question_id = #{questionId}")
-    List<UserQuestion> later(@Param("userId")Integer userId, @Param("questionId") Integer questionId);
 
     /**
      *  查询的是稍后答对话框数据
@@ -35,8 +27,8 @@ public interface QuestionDao extends BaseMapper<QuestionDO> {
     /**
      *  删除关注问题
      */
-    @Delete("delete from user_question where user_id = #{userId} and question_id = #{questionId}")
-    void deleteLater(@Param("userId")Integer userId, @Param("questionId") Integer questionId);
+    @Delete("delete from user_question where question_id = #{questionId} and user_id = #{userId}")
+    void deleteLater(@Param("questionId") Integer questionId, @Param("userId")Integer userId);
 
     /**
      * 添加关注问题

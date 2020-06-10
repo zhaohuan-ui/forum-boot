@@ -12,6 +12,8 @@ import com.forum.modules.questions.VO.QuestionVO;
 import com.forum.modules.questions.dao.AttentionQuestionDao;
 import com.forum.modules.questions.dao.QuestionDao;
 import com.forum.modules.questions.service.QuestionService;
+import com.forum.modules.user.DO.UserDO;
+import com.forum.modules.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,46 +21,59 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  业务层: 问题查看/发表
+ *  @author Mr Zhang
+ *  @since 2020-06-09
+ */
 @Slf4j
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> implements QuestionService {
-
     @Autowired
     private RedisUtils redisUtils;
+    @Autowired
+    private UserService userService;
     @Autowired
     private QuestionDao questionDao;
     @Autowired
     private AttentionQuestionDao attentionQuestionDao;
 
     @Override
-    public List<QuestionVO> getList(String token) {
+    public List<QuestionVO> getList(UserDO userDO) {
         List<QuestionDO> questionDOS = questionDao.selectList(
                 new QueryWrapper<QuestionDO>()
                 .eq("flag",0)
                 .eq("publish_status",0)
                 .orderByDesc("create_time"));
+        List<AttentionQuestionDO> attentionQuestionDOS = attentionQuestionDao.selectList(new QueryWrapper<AttentionQuestionDO>().eq("flag", 0).eq("create_by", userDO.getId()));
+        List<UserQuestion> userQuestions = questionDao.laterList(userDO.getId());
+        // 遍历问题
         for (QuestionDO questionDO : questionDOS) {
-            List<UserQuestion> userQuestions = questionDao.later(Integer.valueOf(redisUtils.get(token)), questionDO.getId());
-            if(userQuestions != null && userQuestions.size()>0){
-                questionDO.setLaterNumber(1);
+            for (AttentionQuestionDO attentionQuestionDO : attentionQuestionDOS) {
+                // 判断这个问题是否被此用户添加到关注
+                if(attentionQuestionDO.getQuestionId().intValue() == questionDO.getId()){
+                    // 添加到关注后即改变状态值
+                    questionDO.setAttentionStatus("1");
+                }
             }
-            List<AttentionQuestionDO> attentionQuestionDOS = attentionQuestionDao.selectList(new QueryWrapper<AttentionQuestionDO>().
-                    eq("question_name", questionDO.getQuestionName()).
-                    eq("create_by", Integer.valueOf(redisUtils.get(token))).
-                    eq("flag",0));
-            if(attentionQuestionDOS != null && attentionQuestionDOS.size()>0){
-                questionDO.setAttentionNumber(1);
+            for (UserQuestion userQuestion : userQuestions) {
+                // 判断这个问题是否被此用户添加到稍后答
+                if(userQuestion.getQuestionId().intValue() == questionDO.getId()){
+                    // 添加到稍后答 即改变状态值
+                    questionDO.setLaterStatus("1");
+                }
             }
+
         }
-        log.info("查询问答所有数据==>"+questionDOS.size()+"条!");
+        log.info("[ select ] ==> data : " + questionDOS);
+        log.info("[ select ] <== Total: " + questionDOS.size());
         return DozerUtils.mapList(questionDOS, QuestionVO.class);
     }
 
     @Override
-    public void create(QuestionVO questionVO,String token) {
+    public void create(QuestionVO questionVO) {
         QuestionDO questionDO = DozerUtils.map(questionVO, QuestionDO.class);
         questionDO.setId(IDUtils.get10ID());
-        questionDO.setCreateBy(Integer.valueOf(redisUtils.get(token)));
         this.save(questionDO);
     }
 
@@ -74,41 +89,41 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
     }
 
     @Override
-    public List<QuestionVO> drafts(String token) {
+    public List<QuestionVO> drafts(UserDO userDO) {
         List<QuestionDO> questionDOS = questionDao.selectList(
                 new QueryWrapper<QuestionDO>()
                         .eq("flag",0)
                         .eq("publish_status",1)
-                        .eq("create_by",Integer.valueOf(redisUtils.get(token)))
+                        .eq("create_by",userDO.getId())
                         .orderByDesc("create_time"));
-        log.info("查询草稿箱数据==>"+questionDOS.size()+"条!");
         return DozerUtils.mapList(questionDOS, QuestionVO.class);
     }
 
     @Override
-    public List<QuestionVO> later(String token) {
-        List<UserQuestion> userQuestions = questionDao.laterList(Integer.valueOf(redisUtils.get(token)));
-        List<QuestionDO> questionDOS = new ArrayList<>();
+    public List<QuestionVO> later(UserDO userDO) {
+        // 查询此用户添加的所有稍后答
+        List<UserQuestion> userQuestions = questionDao.laterList(userDO.getId());
+        List<QuestionDO> questions = new ArrayList<>();
+        // 遍历稍后答 根据问题id查询问题信息存储后返回
         for (UserQuestion userQuestion : userQuestions) {
-            questionDOS.add(questionDao.selectById(userQuestion.getQuestionId()));
+            questions.add(questionDao.selectById(userQuestion.getQuestionId()));
         }
-        log.info("查询稍后答数据==>"+questionDOS.size()+"条!");
-        return DozerUtils.mapList(questionDOS, QuestionVO.class);
+        log.info("[ select ] ==> data : " + questions);
+        log.info("[ select ] <== Total: " + questions.size());
+        return DozerUtils.mapList(questions, QuestionVO.class);
     }
 
     @Override
-    public void createLater(QuestionVO questionVO, String token) {
-        Integer userId = Integer.valueOf(redisUtils.get(token));
+    public void createLater(QuestionVO questionVO) {
         UserQuestion userQuestion = new UserQuestion();
         userQuestion.setId(IDUtils.get10ID());
-        userQuestion.setUserId(userId);
         userQuestion.setQuestionId(questionVO.getId());
         questionDao.createLater(userQuestion);
     }
 
     @Override
-    public void deleteLater(QuestionVO questionVO,String token) {
-        questionDao.deleteLater(Integer.valueOf(redisUtils.get(token)),questionVO.getId());
+    public void deleteLater(QuestionVO questionVO, UserDO userDO) {
+        questionDao.deleteLater(questionVO.getId(), userDO.getId());
     }
 
 }

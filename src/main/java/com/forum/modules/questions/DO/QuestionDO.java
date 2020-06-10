@@ -5,6 +5,9 @@ import com.forum.common.base.entity.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ *  问题表
+ */
 @Data
 @TableName("question")
 @EqualsAndHashCode(callSuper = true)
@@ -22,13 +25,13 @@ public class QuestionDO extends BaseDO {
      */
     private Integer answerNumber;
     /**
-     *  稍后答状态值
-     */
-    private Integer laterNumber;
-    /**
      *  关注状态值
      */
-    private Integer attentionNumber;
+    private String attentionStatus;
+    /**
+     *  稍后答状态值
+     */
+    private String laterStatus;
     /**
      *  发表状态 0:已发表 1:未发表(存储在草稿箱)
      */

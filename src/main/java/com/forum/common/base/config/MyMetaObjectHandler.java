@@ -1,36 +1,35 @@
 package com.forum.common.base.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.forum.common.utils.redis.RedisUtils;
+import com.forum.common.json.JsonUser;
+import com.forum.modules.user.DO.UserDO;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
  *  自动填充处理类
- *  @author  : zhangchunfeng
+ *  @author  : Mr Zhang
  *  @Date : 20-05-11 下午1:15
  */
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
-    @Autowired
-    private RedisUtils redisUtils;
-
     @Override
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByName("createTime",new Date(),metaObject);
         this.setFieldValByName("updateTime",new Date(),metaObject);
-        //this.setFieldValByName("createBy",1,metaObject);
+        UserDO userDO = JsonUser.jsonUser(SecurityUtils.getSubject().getPrincipal().toString());
+        this.setFieldValByName("createBy",userDO.getId(),metaObject);
         this.setFieldValByName("flag",0,metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         this.setFieldValByName("updateTime",new Date(),metaObject);
-        //this.setFieldValByName("createBy",1,metaObject);
+        /*UserDO userDO = JsonUser.jsonUser(SecurityUtils.getSubject().getPrincipal().toString());
+        this.setFieldValByName("createBy",userDO.getId(),metaObject);*/
     }
 }

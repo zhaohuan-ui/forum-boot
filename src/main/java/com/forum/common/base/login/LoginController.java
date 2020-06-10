@@ -1,43 +1,43 @@
-package com.forum.modules.login;
+package com.forum.common.base.login;
 
-import com.forum.common.constan.Globals;
-import com.forum.common.utils.login.LoginUtils;
-import com.forum.common.utils.redis.RedisUtils;
 import com.forum.common.utils.result.HttpResult;
 import com.forum.common.utils.result.HttpResultUtil;
 import com.forum.modules.user.DO.UserDO;
 import com.forum.modules.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *  控制器: 登录/登出
+ *  @author Mr Zhang
+ *  @since 2020-06-09
+ */
 @Slf4j
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-
     @Autowired
     private UserService userService;
-    @Autowired
-    private RedisUtils redisUtils;
 
     /**
      *  登录验证
      */
     @RequestMapping(value = "/user", method = RequestMethod.POST)
-    public HttpResult<Object> login(@RequestBody UserDO userRequest, HttpSession session) {
+    public HttpResult<Object> login(@RequestBody UserDO userDO) {
         try {
-            UserDO userDO = userService.getUser(userRequest.getUsername());
-            // 将用户信息保存到redis中
-            redisUtils.set(userDO.getUsername(),userDO.getId());
-            redisUtils.set(userDO.getId().toString(),userDO);
-            log.info("==========用户登陆成功==========");
+            //获取当前的用户
+            Subject subject = SecurityUtils.getSubject();
+            //封装用户的登录数据
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(userDO.getUsername(), userDO.getPassword());
+            subject.login(usernamePasswordToken);
+            log.info("[ "+userDO.getUsername()+" ]用户登陆成功");
             return HttpResultUtil.success("登录成功!",userDO);
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,11 +62,10 @@ public class LoginController {
      */
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public HttpResult<Object> logout(String token) {
-        Integer id = Integer.valueOf(redisUtils.get(token));
-        redisUtils.delete(id.toString());
-        redisUtils.delete(token); // token就是username
-       /* HttpSession session = request.getSession();
-        session.removeAttribute(Globals.USER_SESSION); // 注销该操作用户*/
+        //获取当前的用户
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        log.info("[ "+token+" ]用户退出登录");
         return HttpResultUtil.success("退出成功!", null);
     }
 

@@ -5,6 +5,9 @@ import com.forum.common.base.entity.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ *  回答表
+ */
 @Data
 @TableName("answer")
 @EqualsAndHashCode(callSuper = true)
@@ -12,9 +15,9 @@ public class AnswerDO extends BaseDO{
     /**
      *  问题主键
      */
-    private Integer querstionId;
+    private Integer questionId;
     /**
-     * 评论ID
+     * 回答/评论ID
      */
     private Integer commentId;
     /**

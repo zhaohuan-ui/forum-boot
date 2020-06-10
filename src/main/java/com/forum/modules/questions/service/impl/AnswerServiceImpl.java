@@ -6,13 +6,13 @@ import com.forum.common.utils.IDUtils.IDUtils;
 import com.forum.common.utils.dozer.DozerUtils;
 import com.forum.common.utils.redis.RedisUtils;
 import com.forum.modules.questions.DO.AnswerDO;
-import com.forum.modules.questions.DO.UserQuestion;
+import com.forum.modules.questions.DO.AttentionQuestionDO;
 import com.forum.modules.questions.VO.AnswerVO;
 import com.forum.modules.questions.dao.AnswerDao;
+import com.forum.modules.questions.dao.AttentionQuestionDao;
 import com.forum.modules.questions.dao.QuestionDao;
 import com.forum.modules.questions.service.AnswerService;
 import com.forum.modules.questions.service.QuestionService;
-import com.forum.modules.user.DO.UserDO;
 import com.forum.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  业务层: 回答问题查看/评论
+ *  @author Mr Zhang
+ *  @since 2020-06-09
+ */
 @Service
 public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implements AnswerService {
-
     @Autowired
     private RedisUtils redisUtils;
     @Autowired
@@ -35,12 +39,14 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
     private QuestionService questionService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AttentionQuestionDao attentionQuestionDao;
 
     @Override
     public Map<String,Object> getList(Integer questionId) {
         List<AnswerDO> answerDOS = answerDao.selectList(new QueryWrapper<AnswerDO>().
                 eq("flag", 0).
-                eq("querstion_id", questionId).
+                eq("question_id", questionId).
                 eq("comment_id", 0).
                 orderByDesc("create_time"));
         List<AnswerVO> answerVOList = new ArrayList<>(); // 需要返回的数据
@@ -58,25 +64,22 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
             answerVOList.add(answerVO);
         }
         // 获取关注者数量
-        int attentionNumber = questionDao.attentionNumber(questionId).size();
+        Integer attentionNumber = attentionQuestionDao.selectList(new QueryWrapper<AttentionQuestionDO>().eq("question_id", questionId).eq("flag", 0)).size();
         // 获取浏览数量
         Integer volumeNumber = questionService.getById(questionId).getVolumeNumber();
-        int answerNumber = answerDao.selectList(new QueryWrapper<AnswerDO>().eq("querstion_id", questionId).eq("flag", 0)).size();
         Map<String,Object> map = new HashMap<>();
         map.put("answers",answerVOList);
         map.put("attentionNumber",attentionNumber); // 关注者数量
         map.put("volumeNumber",volumeNumber); // 浏览数量
-        map.put("answerNumber",answerNumber); // 回答数量
         return map;
     }
 
     @Override
-    public void createAnswer(AnswerVO answerVO, Integer querstionId, Integer commentId, String token) {
+    public void createAnswer(AnswerVO answerVO, Integer questionId, Integer commentId) {
         AnswerDO answerDO = DozerUtils.map(answerVO, AnswerDO.class);
         answerDO.setId(IDUtils.get10ID());
-        answerDO.setQuerstionId(querstionId);
+        answerDO.setQuestionId(questionId);
         answerDO.setCommentId(commentId);
-        answerDO.setCreateBy(Integer.valueOf(redisUtils.get(token)));
         answerDao.insert(answerDO);
     }
 }

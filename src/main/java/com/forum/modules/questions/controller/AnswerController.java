@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *  控制器: 回答问题查看/评论
+ *  @author Mr Zhang
+ *  @since 2020-06-09
+ */
 @RestController
 @RequestMapping("/answer")
 public class AnswerController {
@@ -34,8 +39,8 @@ public class AnswerController {
      *  回答问题 分为回答问题和评论已回答问题
      */
     @RequestMapping(value = "/createAnswer",method = RequestMethod.POST)
-    public HttpResult<Object> createAnswer(@RequestBody AnswerVO answerVO, Integer querstionId, Integer commentId, String token){
-        answerService.createAnswer(answerVO, querstionId, commentId, token);
+    public HttpResult<Object> createAnswer(@RequestBody AnswerVO answerVO, Integer questionId, Integer commentId){
+        answerService.createAnswer(answerVO, questionId, commentId);
         return HttpResultUtil.success("回答成功!");
     }
 }

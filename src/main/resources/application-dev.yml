@@ -70,4 +70,16 @@ framework:
 logging:
   level:
     root: info
+#shiro:
+#  web:
+#    enabled: true
+#  loginUrl: /login/user
+permission-config:
+  perms:
+    - key: /login/user
+      value: anon
+    - key: /login/logout
+      value: anon
+    - key: /**
+      value: jwt
 
