@@ -65,8 +65,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
             }
 
         }
-        log.info("[ select ] ==> data : " + questionDOS);
-        log.info("[ select ] <== Total: " + questionDOS.size());
         return DozerUtils.mapList(questionDOS, QuestionVO.class);
     }
 
@@ -80,6 +78,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
     @Override
     public void update(QuestionVO questionVO) {
         QuestionDO questionDO = DozerUtils.map(questionVO, QuestionDO.class);
+        questionDO.setLaterStatus("0");
+        questionDO.setAttentionStatus("0");
         questionDao.updateById(questionDO);
     }
 
@@ -108,17 +108,21 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDao,QuestionDO> imp
         for (UserQuestion userQuestion : userQuestions) {
             questions.add(questionDao.selectById(userQuestion.getQuestionId()));
         }
-        log.info("[ select ] ==> data : " + questions);
-        log.info("[ select ] <== Total: " + questions.size());
         return DozerUtils.mapList(questions, QuestionVO.class);
     }
 
     @Override
-    public void createLater(QuestionVO questionVO) {
-        UserQuestion userQuestion = new UserQuestion();
-        userQuestion.setId(IDUtils.get10ID());
-        userQuestion.setQuestionId(questionVO.getId());
-        questionDao.createLater(userQuestion);
+    public void createLater(QuestionVO questionVO, UserDO userDO) {
+        try {
+            // 创建稍后答对象 (由于没有使用BaseDO,即无法自动注入创建人ID,需要手动添加)
+            UserQuestion userQuestion = new UserQuestion();
+            userQuestion.setId(IDUtils.get10ID());
+            userQuestion.setUserId(userDO.getId());
+            userQuestion.setQuestionId(questionVO.getId());
+            questionDao.createLater(userQuestion);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

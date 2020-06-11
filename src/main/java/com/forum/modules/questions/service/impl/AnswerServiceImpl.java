@@ -7,12 +7,14 @@ import com.forum.common.utils.dozer.DozerUtils;
 import com.forum.common.utils.redis.RedisUtils;
 import com.forum.modules.questions.DO.AnswerDO;
 import com.forum.modules.questions.DO.AttentionQuestionDO;
+import com.forum.modules.questions.DO.QuestionDO;
 import com.forum.modules.questions.VO.AnswerVO;
 import com.forum.modules.questions.dao.AnswerDao;
 import com.forum.modules.questions.dao.AttentionQuestionDao;
 import com.forum.modules.questions.dao.QuestionDao;
 import com.forum.modules.questions.service.AnswerService;
 import com.forum.modules.questions.service.QuestionService;
+import com.forum.modules.user.DO.UserDO;
 import com.forum.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,14 +45,14 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
     private AttentionQuestionDao attentionQuestionDao;
 
     @Override
-    public Map<String,Object> getList(Integer questionId) {
+    public Map<String,Object> getList(Integer questionId, UserDO userDO) {
         List<AnswerDO> answerDOS = answerDao.selectList(new QueryWrapper<AnswerDO>().
                 eq("flag", 0).
                 eq("question_id", questionId).
                 eq("comment_id", 0).
                 orderByDesc("create_time"));
-        List<AnswerVO> answerVOList = new ArrayList<>(); // 需要返回的数据
-        List<AnswerDO> answerDOList = new ArrayList<>();
+        List<AnswerVO> answerVOList = new ArrayList<>(); // 需要返回的回答
+        List<AnswerDO> answerDOList = new ArrayList<>(); // 返回对每个回答的评论
         for (AnswerDO answerDO : answerDOS) {
             answerDOList = answerDao.selectList(new QueryWrapper<AnswerDO>().
                     eq("flag", 0).
@@ -65,12 +67,18 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
         }
         // 获取关注者数量
         Integer attentionNumber = attentionQuestionDao.selectList(new QueryWrapper<AttentionQuestionDO>().eq("question_id", questionId).eq("flag", 0)).size();
-        // 获取浏览数量
-        Integer volumeNumber = questionService.getById(questionId).getVolumeNumber();
+        // 获取问题信息
+        QuestionDO questionDO = questionService.getById(questionId);
+        List<AttentionQuestionDO> attentionQuestionDOS = attentionQuestionDao.selectList(
+                new QueryWrapper<AttentionQuestionDO>().eq("question_id",questionDO.getId()).eq("flag", 0).eq("create_by", userDO.getId()));
+        if(attentionQuestionDOS != null && attentionQuestionDOS.size() > 0){
+            questionDO.setAttentionStatus("1");
+        }
         Map<String,Object> map = new HashMap<>();
+        map.put("questionDO",questionDO);
         map.put("answers",answerVOList);
         map.put("attentionNumber",attentionNumber); // 关注者数量
-        map.put("volumeNumber",volumeNumber); // 浏览数量
+        map.put("volumeNumber",questionDO.getVolumeNumber()); // 浏览数量
         return map;
     }
 

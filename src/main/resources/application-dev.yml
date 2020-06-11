@@ -7,7 +7,7 @@ spring:
       #      url: jdbc:mysql://192.144.207.22:3306/forum1.0?characterEncoding=utf-8
       #      username: root
       #      password: 123456
-      url: jdbc:mysql://localhost:3306/forum1.0?useUnicode=true&characterEncoding=gbk&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://127.0.0.1:3306/forum1.0?useUnicode=true&characterEncoding=gbk&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
       username: root
       password: root
   redis:
@@ -68,12 +68,12 @@ framework:
     open: true # 是否开启缓存  true开启   false关闭
 
 logging:
-  level:
-    root: info
-#shiro:
-#  web:
-#    enabled: true
-#  loginUrl: /login/user
+  level: debug
+  level.com.forum: debug
+  db: debug
+  error: debug
+  file: D:/logs/log_log4j
+
 permission-config:
   perms:
     - key: /login/user

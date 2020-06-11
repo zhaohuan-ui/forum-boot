@@ -42,7 +42,7 @@ public interface QuestionService extends IService<QuestionDO> {
     /**
      *  添加稍后答
      */
-    void createLater(QuestionVO questionVO);
+    void createLater(QuestionVO questionVO, UserDO userDO);
 
     /**
      *  移除稍后答数据

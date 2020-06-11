@@ -12,12 +12,10 @@ import com.forum.modules.questions.dao.AttentionQuestionDao;
 import com.forum.modules.questions.service.AttentionQuestionService;
 import com.forum.modules.user.DO.UserDO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Queue;
 
 /**
  *  业务层: 关注问题
@@ -46,14 +44,12 @@ public class AttentionQuestionServiceImpl extends ServiceImpl<AttentionQuestionD
         attentionQuestionDO.setId(IDUtils.get10ID());
         attentionQuestionDO.setQuestionId(questionVO.getId());
         attentionQuestionDao.insert(attentionQuestionDO);
-        log.info("[ create ] " + attentionQuestionDO);
     }
 
     @Override
     public void deleteAttention(QuestionVO questionVO, UserDO userDO) {
-        int delete = attentionQuestionDao.delete(new QueryWrapper<AttentionQuestionDO>().
-                eq("question_name", questionVO.getQuestionName()).
+        attentionQuestionDao.delete(new QueryWrapper<AttentionQuestionDO>().
+                eq("question_id", questionVO.getId()).
                 eq("create_by", userDO.getId()));
-        log.info("[ delete ] " + questionVO.toString());
     }
 }

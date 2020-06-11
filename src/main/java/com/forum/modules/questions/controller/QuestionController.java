@@ -79,8 +79,8 @@ public class QuestionController {
      *  点击稍后答 添加到稍后答列表
      */
     @RequestMapping(value = "/createLater",method = RequestMethod.POST)
-    public HttpResult<Object> createLater(@RequestBody QuestionVO questionVO){
-        questionService.createLater(questionVO);
+    public HttpResult<Object> createLater(@RequestBody QuestionVO questionVO, @LoginUser UserDO userDO){
+        questionService.createLater(questionVO, userDO);
         return HttpResultUtil.success("添加成功!");
     }
 
