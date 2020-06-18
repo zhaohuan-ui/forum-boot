@@ -1,6 +1,7 @@
 package com.forum.modules.questions.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.forum.common.utils.PageUtils;
 import com.forum.modules.questions.DO.QuestionDO;
 import com.forum.modules.questions.VO.QuestionVO;
 import com.forum.modules.user.DO.UserDO;
@@ -12,7 +13,7 @@ public interface QuestionService extends IService<QuestionDO> {
     /**
      *  查询所有已发布问答
      */
-    List<QuestionVO> getList(UserDO userDO);
+    List<QuestionVO> getList(PageUtils pageUtils, UserDO userDO);
 
     /**
      *  写问答

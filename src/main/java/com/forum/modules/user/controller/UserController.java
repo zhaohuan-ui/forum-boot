@@ -1,5 +1,6 @@
 package com.forum.modules.user.controller;
 
+import com.forum.common.annotation.LoginUser;
 import com.forum.common.utils.result.HttpResult;
 import com.forum.common.utils.result.HttpResultUtil;
 import com.forum.modules.user.DO.UserDO;
@@ -48,9 +49,8 @@ public class UserController {
 
     @RequestMapping(value = "/getUser")
     @ResponseBody
-    public HttpResult<Object> getUser(String username){
-        UserDO user = userService.getUser(username);
-        user.setPassword(UUID.randomUUID().toString());
-        return HttpResultUtil.success("查询成功!",user);
+    public HttpResult<Object> getUser(@LoginUser UserDO userDO){
+        userDO.setPassword(UUID.randomUUID().toString());
+        return HttpResultUtil.success("查询成功!",userDO);
     }
 }

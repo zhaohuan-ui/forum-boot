@@ -28,7 +28,7 @@ public class DateUtils {
         return DateTimeFormatter.ofPattern(format);
     }
 
-    //获取系统当前时间戳: 0获取秒  其余为毫秒
+    // 获取系统当前时间戳: 0获取秒  其余为毫秒
     public static long getCurrentTimestamp(int id){
         if(id == 0){
             return Instant.now().getEpochSecond();
@@ -36,13 +36,12 @@ public class DateUtils {
         return Instant.now().toEpochMilli();
     }
 
-    //获取传入时间的时间戳
-//    public static long getGivenTimestamp(LocalDateTime localDateTime){
-//        localDateTime
-//    }
+    // 获取传入时间的时间戳
+    /*public static long getGivenTimestamp(LocalDateTime localDateTime){
+        return -1L;
+    }*/
 
-
-    //比较传入时间先后 firstTime在secondTime之前 返回true
+    // 比较传入时间先后 firstTime在secondTime之前 返回true
     public static boolean compareDate(Object firstTime, Object secondTime){
            if(firstTime instanceof LocalDateTime && secondTime instanceof LocalDateTime ){
                 return ((LocalDateTime) firstTime).isBefore((LocalDateTime)secondTime);

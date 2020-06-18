@@ -1,6 +1,7 @@
 package com.forum.modules.questions.controller;
 
 import com.forum.common.annotation.LoginUser;
+import com.forum.common.utils.PageUtils;
 import com.forum.common.utils.result.HttpResult;
 import com.forum.common.utils.result.HttpResultUtil;
 import com.forum.modules.questions.VO.QuestionVO;
@@ -28,8 +29,8 @@ public class QuestionController {
      *  查询所有人发表的问题
      */
     @RequestMapping(value = "/getList",method = RequestMethod.POST)
-    public HttpResult<Object> getList(@LoginUser UserDO userDO){
-        return HttpResultUtil.success("查询成功!",questionService.getList(userDO));
+    public HttpResult<Object> getList(@RequestBody PageUtils pageUtils, @LoginUser UserDO userDO){
+        return HttpResultUtil.success("查询成功!",questionService.getList(pageUtils, userDO));
     }
 
     /**

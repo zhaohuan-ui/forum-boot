@@ -28,4 +28,12 @@ public class AnswerDO extends BaseDO{
      *  点赞数量
      */
     private Integer endorseNumber;
+    /**
+     *  用户头像地址
+     */
+    private String imgUrl;
+    /**
+     *  备注
+     */
+    private String remark;
 }

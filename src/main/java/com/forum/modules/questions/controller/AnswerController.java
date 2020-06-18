@@ -38,8 +38,8 @@ public class AnswerController {
      *  回答问题 分为回答问题和评论已回答问题
      */
     @RequestMapping(value = "/createAnswer",method = RequestMethod.POST)
-    public HttpResult<Object> createAnswer(@RequestBody AnswerVO answerVO, Integer questionId, Integer commentId){
-        answerService.createAnswer(answerVO, questionId, commentId);
+    public HttpResult<Object> createAnswer(@RequestBody AnswerVO answerVO, Integer questionId, Integer commentId, @LoginUser UserDO userDO){
+        answerService.createAnswer(answerVO, questionId, commentId,userDO);
         return HttpResultUtil.success("回答成功!");
     }
 }

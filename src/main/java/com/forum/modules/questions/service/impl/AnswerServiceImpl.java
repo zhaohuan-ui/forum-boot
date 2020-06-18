@@ -34,8 +34,6 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
     @Autowired
     private RedisUtils redisUtils;
     @Autowired
-    private AnswerDao answerDao;
-    @Autowired
     private QuestionDao questionDao;
     @Autowired
     private QuestionService questionService;
@@ -46,7 +44,7 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
 
     @Override
     public Map<String,Object> getList(Integer questionId, UserDO userDO) {
-        List<AnswerDO> answerDOS = answerDao.selectList(new QueryWrapper<AnswerDO>().
+        List<AnswerDO> answerDOS = baseMapper.selectList(new QueryWrapper<AnswerDO>().
                 eq("flag", 0).
                 eq("question_id", questionId).
                 eq("comment_id", 0).
@@ -54,7 +52,7 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
         List<AnswerVO> answerVOList = new ArrayList<>(); // 需要返回的回答
         List<AnswerDO> answerDOList = new ArrayList<>(); // 返回对每个回答的评论
         for (AnswerDO answerDO : answerDOS) {
-            answerDOList = answerDao.selectList(new QueryWrapper<AnswerDO>().
+            answerDOList = baseMapper.selectList(new QueryWrapper<AnswerDO>().
                     eq("flag", 0).
                     eq("comment_id", answerDO.getId()));
             AnswerVO answerVO = DozerUtils.map(answerDO, AnswerVO.class);
@@ -79,15 +77,17 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
         map.put("answers",answerVOList);
         map.put("attentionNumber",attentionNumber); // 关注者数量
         map.put("volumeNumber",questionDO.getVolumeNumber()); // 浏览数量
+        map.put("userDO",userDO); // 浏览数量
         return map;
     }
 
     @Override
-    public void createAnswer(AnswerVO answerVO, Integer questionId, Integer commentId) {
+    public void createAnswer(AnswerVO answerVO, Integer questionId, Integer commentId, UserDO userDO) {
         AnswerDO answerDO = DozerUtils.map(answerVO, AnswerDO.class);
         answerDO.setId(IDUtils.get10ID());
         answerDO.setQuestionId(questionId);
         answerDO.setCommentId(commentId);
-        answerDao.insert(answerDO);
+        answerDO.setImgUrl(userDO.getImgUrl());
+        baseMapper.insert(answerDO);
     }
 }
