@@ -14,10 +14,6 @@ public class AnswerVO extends AnswerDO {
      */
     private String nickName;
     /**
-     *  返回评论者头像路径
-     */
-    private String imgUrl;
-    /**
      *  关注者
      */
     private Integer attentionNumber;

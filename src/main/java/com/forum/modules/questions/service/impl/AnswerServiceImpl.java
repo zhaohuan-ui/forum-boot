@@ -50,16 +50,20 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerDao,AnswerDO> implement
                 eq("comment_id", 0).
                 orderByDesc("create_time"));
         List<AnswerVO> answerVOList = new ArrayList<>(); // 需要返回的回答
-        List<AnswerDO> answerDOList = new ArrayList<>(); // 返回对每个回答的评论
+        List<AnswerDO> commentList = new ArrayList<>(); // 返回对每个回答的评论
         for (AnswerDO answerDO : answerDOS) {
-            answerDOList = baseMapper.selectList(new QueryWrapper<AnswerDO>().
+            commentList = baseMapper.selectList(new QueryWrapper<AnswerDO>().
                     eq("flag", 0).
                     eq("comment_id", answerDO.getId()));
             AnswerVO answerVO = DozerUtils.map(answerDO, AnswerVO.class);
             // 获取用户昵称 头像地址
             answerVO.setNickName(userService.getById(answerDO.getCreateBy()).getNickName());
+            List<AnswerVO> comments = DozerUtils.mapList(commentList, AnswerVO.class);
+            for (AnswerVO comment : comments) {
+                comment.setNickName(userService.getById(comment.getCreateBy()).getNickName());
+            }
             // 获取此回答的评论内容
-            answerVO.setComments(DozerUtils.mapList(answerDOList, AnswerVO.class));
+            answerVO.setComments(comments);
             // 返回数据
             answerVOList.add(answerVO);
         }
